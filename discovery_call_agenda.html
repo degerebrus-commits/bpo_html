@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery Call Agenda — Coaching BPO Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Syne:wght@600;700;800&family=Lora:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #DDD9D0;
+  --border2: #C8C3B8;
+  --ink: #1A1814;
+  --ink2: #4A4640;
+  --ink3: #7A756E;
+  --accent: #1A3A5C;
+  --accent2: #0F6E56;
+  --amber: #B45E0A;
+  --red: #9B2C2C;
+  --tag-blue: #EBF2FA;
+  --tag-green: #E2F5EE;
+  --tag-amber: #FDF3E3;
+  --tag-red: #FCEAEA;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+  --serif: 'Lora', serif;
+  --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Layout ── */
+.wrapper {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--accent);
+  color: #C8D8E8;
+  padding: 32px 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sidebar-brand {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(200,216,232,0.5);
+  margin-bottom: 8px;
+}
+
+.sidebar-title {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.2;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Timer */
+.timer-block {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.timer-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(200,216,232,0.5);
+  margin-bottom: 6px;
+}
+
+.timer-display {
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 500;
+  color: #FFFFFF;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.timer-display.warn { color: #F6AD55; }
+.timer-display.over { color: #FC8181; }
+
+.timer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  color: #FFFFFF;
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.timer-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* Nav */
+.nav-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(200,216,232,0.4);
+  margin-bottom: 8px;
+  margin-top: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-bottom: 2px;
+  text-decoration: none;
+  color: rgba(200,216,232,0.7);
+  font-size: 12.5px;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+.nav-item.active { background: rgba(255,255,255,0.12); color: #FFFFFF; }
+
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(200,216,232,0.3);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.nav-item.active .nav-dot { background: #63B3ED; }
+.nav-item.done .nav-dot { background: #68D391; }
+
+.nav-time {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(200,216,232,0.35);
+  flex-shrink: 0;
+}
+
+/* Scorecard sidebar */
+.score-block {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.score-block-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(200,216,232,0.4);
+  margin-bottom: 10px;
+}
+
+.mini-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 12px;
+  color: rgba(200,216,232,0.6);
+}
+
+.mini-score:last-child { border-bottom: none; }
+
+.mini-score-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(200,216,232,0.4);
+}
+
+.mini-score-val.filled { color: #FFFFFF; }
+.mini-score-val.critical { color: #FC8181; }
+.mini-score-val.moderate { color: #F6AD55; }
+
+/* ── Main content ── */
+.main {
+  padding: 40px 48px 80px;
+  max-width: 900px;
+}
+
+/* Pre-call prep bar */
+.prep-bar {
+  background: var(--tag-blue);
+  border: 1px solid #BDD7EE;
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 36px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.prep-icon {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  font-size: 13px;
+}
+
+.prep-text { font-size: 13px; color: var(--accent); line-height: 1.4; }
+.prep-text strong { font-weight: 500; }
+
+/* Section */
+.agenda-section {
+  margin-bottom: 40px;
+  scroll-margin-top: 24px;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-num {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.section-num.green { background: var(--accent2); }
+.section-num.amber { background: var(--amber); }
+.section-num.red { background: var(--red); }
+
+.section-meta { flex: 1; }
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 3px;
+}
+
+.section-title {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.section-time {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Script block */
+.script {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.script-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.script-body {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+.script-body em {
+  font-style: normal;
+  background: rgba(26,58,92,0.08);
+  padding: 0 3px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
+
+/* Listen block */
+.listen {
+  background: var(--tag-green);
+  border: 1px solid #9FD5BF;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #0A4A38;
+  line-height: 1.5;
+}
+
+.listen-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 6px;
+  font-style: normal;
+}
+
+/* Flag block */
+.flag {
+  background: var(--tag-amber);
+  border: 1px solid #E8C882;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #5C3A0A;
+  line-height: 1.5;
+}
+
+.flag.red {
+  background: var(--tag-red);
+  border-color: #F0A0A0;
+  color: #6B1A1A;
+}
+
+.flag-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.flag.red .flag-label { color: var(--red); }
+
+/* Steps list */
+.steps { margin-bottom: 16px; }
+
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.5;
+}
+
+.step-row:last-child { border-bottom: none; }
+
+.step-check {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  color: transparent;
+}
+
+.step-check.checked {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: white;
+}
+
+.step-check.checked::after { content: '✓'; }
+
+/* TOC Scorecard */
+.scorecard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.scorecard-header {
+  background: var(--accent);
+  color: white;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scorecard-title {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.scorecard-subtitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gate-row {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 140px 1fr 80px 80px;
+  gap: 12px;
+  align-items: start;
+}
+
+.gate-row:last-child { border-bottom: none; }
+
+.gate-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+  padding-top: 2px;
+}
+
+.gate-questions { font-size: 12px; color: var(--ink3); line-height: 1.4; }
+
+.gate-score-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-input {
+  width: 46px;
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: center;
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.score-input:focus { border-color: var(--accent); }
+
+.score-denom {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+.gate-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-critical { background: var(--tag-red); color: var(--red); }
+.status-moderate { background: var(--tag-amber); color: var(--amber); }
+.status-low { background: var(--tag-green); color: var(--accent2); }
+.status-pending { background: var(--surface2); color: var(--ink3); }
+
+.scorecard-footer {
+  padding: 14px 20px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.primary-constraint {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+.primary-constraint strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Offer block */
+.offer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.offer-header {
+  background: linear-gradient(135deg, #1A3A5C, #0F2A42);
+  color: white;
+  padding: 20px 24px;
+}
+
+.offer-header-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 4px;
+}
+
+.offer-header-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.offer-body { padding: 20px 24px; }
+
+.offer-tier {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.offer-item {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.offer-item:hover { border-color: var(--accent); }
+.offer-item.selected { border-color: var(--accent); background: var(--tag-blue); }
+
+.offer-item-gate {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 4px;
+}
+
+.offer-item-name {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.offer-item-detail {
+  font-size: 11px;
+  color: var(--ink3);
+  line-height: 1.4;
+}
+
+.price-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.price-input-group { display: flex; flex-direction: column; gap: 4px; }
+
+.price-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.price-input {
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.price-input:focus { border-color: var(--accent); }
+
+.roi-calc {
+  background: var(--tag-blue);
+  border: 1px solid #BDD7EE;
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--accent);
+  line-height: 1.6;
+}
+
+.roi-number {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  display: block;
+  margin-top: 4px;
+}
+
+/* Objection table */
+.objection-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+
+.objection-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  padding: 8px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.objection-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--ink2);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.objection-table tr:last-child td { border-bottom: none; }
+.objection-table td:first-child { font-weight: 500; color: var(--ink); width: 200px; }
+
+/* Notes area */
+.notes-area {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+  line-height: 1.6;
+}
+
+.notes-area:focus { border-color: var(--accent); }
+
+/* Divider */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 8px 0 24px;
+}
+
+/* Print */
+@media print {
+  .wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px; }
+  .timer-block, .prep-bar { display: none; }
+  textarea { border: 1px solid #ccc; }
+  .offer-item { border: 1px solid #ccc; }
+}
+
+@media (max-width: 768px) {
+  .wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 24px 20px; }
+  .offer-tier { grid-template-columns: 1fr; }
+  .gate-row { grid-template-columns: 1fr 1fr; }
+  .price-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">BPO Consulting</div>
+  <div class="sidebar-title">Discovery Call<br>Agenda</div>
+
+  <div class="timer-block">
+    <div class="timer-label">Call timer</div>
+    <div class="timer-display" id="timer">30:00</div>
+    <button class="timer-btn" id="timer-btn" onclick="toggleTimer()">
+      <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M2 1l7 5-7 5V1z" fill="currentColor"/></svg>
+      Start timer
+    </button>
+  </div>
+
+  <div class="nav-label">Sections</div>
+  <a class="nav-item active" href="#s0" onclick="markActive(this)">
+    <span class="nav-dot"></span> Pre-call setup <span class="nav-time">—2 min</span>
+  </a>
+  <a class="nav-item" href="#s1" onclick="markActive(this)">
+    <span class="nav-dot"></span> Open & frame <span class="nav-time">3 min</span>
+  </a>
+  <a class="nav-item" href="#s2" onclick="markActive(this)">
+    <span class="nav-dot"></span> Pre-audit review <span class="nav-time">5 min</span>
+  </a>
+  <a class="nav-item" href="#s3" onclick="markActive(this)">
+    <span class="nav-dot"></span> Gate scoring <span class="nav-time">12 min</span>
+  </a>
+  <a class="nav-item" href="#s4" onclick="markActive(this)">
+    <span class="nav-dot"></span> Constraint reveal <span class="nav-time">3 min</span>
+  </a>
+  <a class="nav-item" href="#s5" onclick="markActive(this)">
+    <span class="nav-dot"></span> Offer & close <span class="nav-time">7 min</span>
+  </a>
+  <a class="nav-item" href="#s6" onclick="markActive(this)">
+    <span class="nav-dot"></span> Objections <span class="nav-time">as needed</span>
+  </a>
+
+  <div class="score-block">
+    <div class="score-block-label">TOC Scorecard</div>
+    <div class="mini-score">
+      <span>Gate 1 — Scheduling</span>
+      <span class="mini-score-val" id="sb-g1">—</span>
+    </div>
+    <div class="mini-score">
+      <span>Gate 2 — Qualification</span>
+      <span class="mini-score-val" id="sb-g2">—</span>
+    </div>
+    <div class="mini-score">
+      <span>Gate 3 — Onboarding</span>
+      <span class="mini-score-val" id="sb-g3">—</span>
+    </div>
+    <div class="mini-score" style="margin-top:4px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1)">
+      <span style="color:rgba(200,216,232,0.9);font-size:11px">Primary constraint</span>
+      <span class="mini-score-val filled" id="sb-primary" style="font-size:11px">—</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- Pre-call prep -->
+  <div class="prep-bar" id="s0">
+    <div class="prep-icon">✦</div>
+    <div class="prep-text">
+      <strong>Before the call starts:</strong> Open the pre-audit form submission in a second tab. Enter their data in the Gate Scoring section below. Know their monthly leak estimate before you speak.
+    </div>
+  </div>
+
+  <!-- ── SECTION 0: PRE-CALL ── -->
+  <div class="agenda-section">
+    <div class="section-header">
+      <div class="section-num">0</div>
+      <div class="section-meta">
+        <div class="section-tag">Pre-call · 2 minutes before</div>
+        <div class="section-title">Setup & pre-audit transfer</div>
+        <div class="section-time">⏱ Complete before the coach joins</div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Pull up their pre-audit submission. Note their exact answers to the "bottleneck symptom" checkboxes — those are your mirror phrases.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Enter their key numbers in the Gate Scoring section below so the scorecard is pre-seeded before the call.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Calculate their monthly leak estimate: <span style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px">no-shows × close rate × program value</span> + admin drain. Have this number ready.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Start the 30-minute timer the moment the coach joins.</div>
+      </div>
+    </div>
+
+    <!-- Client prep fields -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:4px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px">Client data from pre-audit</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="price-input-group">
+          <label class="price-label">Coach name</label>
+          <input class="price-input" type="text" id="coach-name" placeholder="—" oninput="updateName()">
+        </div>
+        <div class="price-input-group">
+          <label class="price-label">Monthly visitors</label>
+          <input class="price-input" type="number" id="c-visitors" placeholder="1000" oninput="updateCalc()">
+        </div>
+        <div class="price-input-group">
+          <label class="price-label">Monthly inquiries</label>
+          <input class="price-input" type="number" id="c-inquiries" placeholder="40" oninput="updateCalc()">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+        <div class="price-input-group">
+          <label class="price-label">Calls last month</label>
+          <input class="price-input" type="number" id="c-calls" placeholder="20" oninput="updateCalc()">
+        </div>
+        <div class="price-input-group">
+          <label class="price-label">No-shows</label>
+          <input class="price-input" type="number" id="c-noshows" placeholder="5" oninput="updateCalc()">
+        </div>
+        <div class="price-input-group">
+          <label class="price-label">New clients</label>
+          <input class="price-input" type="number" id="c-clients" placeholder="4" oninput="updateCalc()">
+        </div>
+        <div class="price-input-group">
+          <label class="price-label">Program value ($)</label>
+          <input class="price-input" type="number" id="c-progval" placeholder="3000" oninput="updateCalc()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── SECTION 1: OPEN ── -->
+  <div class="agenda-section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-meta">
+        <div class="section-tag">Section 1 · 0:00 – 3:00</div>
+        <div class="section-title">Open & frame the session</div>
+        <div class="section-time">⏱ 3 minutes — do not skip</div>
+      </div>
+    </div>
+
+    <div class="script">
+      <div class="script-label">Opening script</div>
+      <div class="script-body">
+        "Thanks for filling out the pre-audit — that already told me a lot. Today's call is structured as a diagnostic, not a pitch. I'm going to walk us through three specific checkpoints in your workflow, and by the end we'll have identified exactly where your pipeline is losing the most throughput. That gives us a clear, specific thing to fix — not a general sense that things could be better. Does that work for you?"
+      </div>
+    </div>
+
+    <div class="listen">
+      <div class="listen-label">Listen for</div>
+      A coach who says "yes, let's do it" without qualifiers is engaged and low-resistance. A coach who immediately pivots to their situation ("well before we do that, I should tell you about…") needs gentle redirection back to the framework — <em>"let's capture that in context as we go through the gates."</em>
+    </div>
+
+    <div class="flag">
+      <div class="flag-label">Framing rule</div>
+      Never call it a "sales call." Never say "I want to show you what I offer." The frame is: <strong>diagnostician running a process audit.</strong> Maintain this throughout. The offer comes from the diagnosis, not from you.
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── SECTION 2: PRE-AUDIT REVIEW ── -->
+  <div class="agenda-section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-meta">
+        <div class="section-tag">Section 2 · 3:00 – 8:00</div>
+        <div class="section-title">Pre-audit data review</div>
+        <div class="section-time">⏱ 5 minutes — anchor with their own numbers</div>
+      </div>
+    </div>
+
+    <div class="script">
+      <div class="script-label">Script</div>
+      <div class="script-body" id="s2-script">
+        "Before we go deeper, I want to reflect back what your pre-audit told me. You're seeing roughly <em id="inq-rate-inline">[X]%</em> inquiry rate — which is actually solid, it means your marketing is working. The leak isn't at the top of the funnel. It's further downstream. Based on your numbers, I'm estimating you're leaving around <em id="leak-inline">$[X]</em> on the table per month. I want to show you exactly which stage that's coming from."
+      </div>
+    </div>
+
+    <div class="listen">
+      <div class="listen-label">Listen for</div>
+      Surprise at the number — "really, that much?" — is a buying signal. Skepticism — "I'm not sure those numbers are right" — is an invitation to walk through the math together. Do it. The formula is transparent and it strengthens your authority.
+    </div>
+
+    <div class="steps">
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Confirm their visitor and inquiry numbers match what they submitted. Discrepancies are useful — they reveal that the coach doesn't track these consistently, which is itself a finding.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Mirror their exact symptom language from the pre-audit checkboxes. If they ticked <em style="font-family:var(--mono);font-size:11px">"I'm busy all day but my bank account doesn't show it"</em> — use that phrase back to them verbatim.</div>
+      </div>
+      <div class="step-row">
+        <div class="step-check" onclick="toggleCheck(this)"></div>
+        <div>Do not explain or diagnose yet. Just reflect. The goal of this section is to make them feel seen and to establish that your data-led approach is different from what they've experienced before.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:4px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Symptom mirror notes</div>
+      <textarea class="notes-area" placeholder="Which symptom checkboxes did they tick? Copy their exact words here to use as mirror phrases during the call…"></textarea>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── SECTION 3: GATE SCORING ── -->
+  <div class="agenda-section" id="s3">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--amber)">3</div>
+      <div class="section-meta">
+        <div class="section-tag">Section 3 · 8:00 – 20:00</div>
+        <div class="section-title">Theory of constraints — gate scoring</div>
+        <div class="section-time">⏱ 12 minutes — the diagnostic core of the call</div>
+      </div>
+    </div>
+
+    <div class="flag">
+      <div class="flag-label">TOC rule</div>
+      You are looking for the single highest-scoring gate. Do not try to fix everything on this call. The moment you find a score of 12+ on any gate, you have your constraint. Keep going for completeness, but your offer is already determined.
+    </div>
+
+    <!-- TOC Scorecard -->
+    <div class="scorecard">
+      <div class="scorecard-header">
+        <div>
+          <div class="scorecard-title">TOC Gate Scorecard</div>
+          <div class="scorecard-subtitle">Score each gate 0–20 based on audit responses</div>
+        </div>
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.6)">Highest score = constraint</div>
+      </div>
+
+      <!-- Gate 1 -->
+      <div class="gate-row">
+        <div>
+          <div class="gate-name">Gate 1<br>Scheduling</div>
+        </div>
+        <div class="gate-questions">
+          <strong style="font-size:12px;color:var(--ink)">A1.</strong> How many manual steps does booking require?<br>
+          <strong style="font-size:12px;color:var(--ink)">A2.</strong> How many hours/week spent on calendar management?<br>
+          <strong style="font-size:12px;color:var(--ink)">A3.</strong> What % of confirmed calls actually show up?<br>
+          <strong style="font-size:12px;color:var(--ink)">A4.</strong> What happens when someone doesn't show?
+        </div>
+        <div class="gate-score-input">
+          <input class="score-input" type="number" id="g1-score" min="0" max="20" placeholder="—" oninput="updateScorecard()">
+          <span class="score-denom">/ 20</span>
+        </div>
+        <div>
+          <span class="gate-status status-pending" id="g1-status">Pending</span>
+        </div>
+      </div>
+
+      <!-- Gate 2 -->
+      <div class="gate-row">
+        <div>
+          <div class="gate-name">Gate 2<br>Qualification</div>
+        </div>
+        <div class="gate-questions">
+          <strong style="font-size:12px;color:var(--ink)">B1.</strong> Do they have a pre-call intake form enforced?<br>
+          <strong style="font-size:12px;color:var(--ink)">B2.</strong> How often do bad-fit leads reach the call?<br>
+          <strong style="font-size:12px;color:var(--ink)">B3.</strong> Can they define their ideal client operationally?<br>
+          <strong style="font-size:12px;color:var(--ink)">B4.</strong> Is booking blocked for unqualified leads?
+        </div>
+        <div class="gate-score-input">
+          <input class="score-input" type="number" id="g2-score" min="0" max="20" placeholder="—" oninput="updateScorecard()">
+          <span class="score-denom">/ 20</span>
+        </div>
+        <div>
+          <span class="gate-status status-pending" id="g2-status">Pending</span>
+        </div>
+      </div>
+
+      <!-- Gate 3 -->
+      <div class="gate-row">
+        <div>
+          <div class="gate-name">Gate 3<br>Onboarding</div>
+        </div>
+        <div class="gate-questions">
+          <strong style="font-size:12px;color:var(--ink)">C1.</strong> How long from verbal yes to payment collected?<br>
+          <strong style="font-size:12px;color:var(--ink)">C2.</strong> What tools handle contract and payment?<br>
+          <strong style="font-size:12px;color:var(--ink)">C3.</strong> Has a verbal yes ever disappeared before payment?<br>
+          <strong style="font-size:12px;color:var(--ink)">C4.</strong> Is post-payment welcome delivery automated?
+        </div>
+        <div class="gate-score-input">
+          <input class="score-input" type="number" id="g3-score" min="0" max="20" placeholder="—" oninput="updateScorecard()">
+          <span class="score-denom">/ 20</span>
+        </div>
+        <div>
+          <span class="gate-status status-pending" id="g3-status">Pending</span>
+        </div>
+      </div>
+
+      <div class="scorecard-footer">
+        <div class="primary-constraint">Primary constraint: <strong id="primary-display">—</strong></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink3)">Estimated leak: <strong id="leak-display" style="color:var(--red)">$—</strong>/mo</div>
+      </div>
+    </div>
+
+    <!-- Gate scripts -->
+    <div style="margin-top:20px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">Gate transition scripts</div>
+
+      <details style="margin-bottom:10px">
+        <summary style="cursor:pointer;font-size:13px;font-weight:500;color:var(--ink);padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:7px;list-style:none;display:flex;align-items:center;justify-content:space-between">
+          Gate 1 — Scheduling entry
+          <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">click to expand ▾</span>
+        </summary>
+        <div class="script" style="border-radius:0 0 8px 8px;border-top:none;margin-bottom:0">
+          <div class="script-label">Script</div>
+          <div class="script-body">"Let's start with how prospects get on your calendar. Walk me through — from the moment someone fills in your contact form to the moment they're actually on a call with you — how many manual steps does that involve?"</div>
+        </div>
+      </details>
+
+      <details style="margin-bottom:10px">
+        <summary style="cursor:pointer;font-size:13px;font-weight:500;color:var(--ink);padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:7px;list-style:none;display:flex;align-items:center;justify-content:space-between">
+          Gate 2 — Qualification entry
+          <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">click to expand ▾</span>
+        </summary>
+        <div class="script" style="border-radius:0 0 8px 8px;border-top:none;margin-bottom:0">
+          <div class="script-label">Script</div>
+          <div class="script-body">"Now let's talk about what happens once someone is on a call with you. How often do you get 15 minutes in and realise this person isn't the right fit — either by budget, mindset, or both? I want a real number, not a feeling."</div>
+        </div>
+      </details>
+
+      <details style="margin-bottom:10px">
+        <summary style="cursor:pointer;font-size:13px;font-weight:500;color:var(--ink);padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:7px;list-style:none;display:flex;align-items:center;justify-content:space-between">
+          Gate 3 — Onboarding entry
+          <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">click to expand ▾</span>
+        </summary>
+        <div class="script" style="border-radius:0 0 8px 8px;border-top:none;margin-bottom:0">
+          <div class="script-label">Script</div>
+          <div class="script-body">"Last checkpoint — what happens after someone says yes? From verbal yes to money in your account, what's the average window? And has a yes ever just... disappeared before payment came through?"</div>
+        </div>
+      </details>
+    </div>
+
+    <div style="margin-top:16px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">In-call notes</div>
+      <textarea class="notes-area" placeholder="Key quotes, numbers, and observations during gate scoring…"></textarea>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── SECTION 4: CONSTRAINT REVEAL ── -->
+  <div class="agenda-section" id="s4">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--red)">4</div>
+      <div class="section-meta">
+        <div class="section-tag">Section 4 · 20:00 – 23:00</div>
+        <div class="section-title">Constraint reveal</div>
+        <div class="section-time">⏱ 3 minutes — the diagnostic verdict</div>
+      </div>
+    </div>
+
+    <div class="flag red">
+      <div class="flag-label">Critical rule</div>
+      State the constraint with confidence. Do not hedge ("it seems like maybe…"). Do not list multiple problems equally. One constraint, named clearly, with the revenue number attached. This is the moment where your authority is established or lost.
+    </div>
+
+    <div class="script">
+      <div class="script-label">Reveal script — adapt gate name and numbers</div>
+      <div class="script-body" id="reveal-script">
+        "Based on what we've just gone through — your primary constraint is <em id="reveal-gate">[Gate X]</em>. Here's what that means in dollar terms: with <em id="reveal-inquiries">[X]</em> inquiries a month and a <em id="reveal-progval">[$X]</em> program, <em id="reveal-leak-sentence">[leak description]</em>. That's not a projection — it's your current throughput gap calculated from your own numbers. Everything else in your workflow can be optimised, but until this gate is fixed, those improvements won't show up in revenue."
+      </div>
+    </div>
+
+    <div class="listen">
+      <div class="listen-label">Listen for</div>
+      The ideal response is a pause, then "yeah, that's exactly it" or "I hadn't thought of it that way." That's the moment of recognition — it means the frame has landed. Silence after the reveal is positive. Do not fill it. Let the number sit.
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── SECTION 5: OFFER ── -->
+  <div class="agenda-section" id="s5">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--accent2)">5</div>
+      <div class="section-meta">
+        <div class="section-tag">Section 5 · 23:00 – 30:00</div>
+        <div class="section-title">The Leak Plugger offer</div>
+        <div class="section-time">⏱ 7 minutes — present, price, next step</div>
+      </div>
+    </div>
+
+    <div class="offer-card">
+      <div class="offer-header">
+        <div class="offer-header-label">Select the implementation package</div>
+        <div class="offer-header-title">Leak Plugger — Tier 1 Offers</div>
+      </div>
+      <div class="offer-body">
+        <div class="offer-tier">
+          <div class="offer-item" id="offer-g1" onclick="selectOffer('g1')">
+            <div class="offer-item-gate">Gate 1 fix</div>
+            <div class="offer-item-name">Scheduling LP</div>
+            <div class="offer-item-detail">Calendly + Zapier<br>Auto-booking, reminders,<br>no-show re-engagement<br>4–6 hrs build time</div>
+          </div>
+          <div class="offer-item" id="offer-g2" onclick="selectOffer('g2')">
+            <div class="offer-item-gate">Gate 2 fix</div>
+            <div class="offer-item-name">Qualification LP</div>
+            <div class="offer-item-detail">Typeform + Calendly<br>Pre-call application,<br>conditional booking logic<br>3–5 hrs build time</div>
+          </div>
+          <div class="offer-item" id="offer-g3" onclick="selectOffer('g3')">
+            <div class="offer-item-gate">Gate 3 fix</div>
+            <div class="offer-item-name">Onboarding LP</div>
+            <div class="offer-item-detail">Stripe + DocuSign + Zapier<br>Auto-contract, payment,<br>welcome sequence<br>5–8 hrs build time</div>
+          </div>
+        </div>
+
+        <div class="price-row">
+          <div class="price-input-group">
+            <label class="price-label">Package price ($)</label>
+            <input class="price-input" type="number" id="pkg-price" placeholder="2500" oninput="updateCalc()">
+          </div>
+          <div class="price-input-group">
+            <label class="price-label">Admin hrs saved / wk</label>
+            <input class="price-input" type="number" id="hrs-saved" placeholder="5" oninput="updateCalc()">
+          </div>
+          <div class="price-input-group">
+            <label class="price-label">Coach hourly rate ($)</label>
+            <input class="price-input" type="number" id="coach-rate" placeholder="200" oninput="updateCalc()">
+          </div>
+        </div>
+
+        <div class="roi-calc" id="roi-calc">
+          Fill in the price and savings above to generate the ROI statement for the offer.
+        </div>
+      </div>
+    </div>
+
+    <div class="script">
+      <div class="script-label">Offer pivot script</div>
+      <div class="script-body" id="offer-script">
+        "The implementation I'm proposing targets this specific gate — nothing else. No system overhaul, no tool migration. We fix the one thing costing you the most, in under two weeks, and you'll see it in the numbers in the first billing cycle. The investment is <em id="price-inline">[$X]</em>. Based on your numbers, that pays for itself the moment you recover <em id="payback-inline">[one client / X hours]</em>. What would need to be true for you to move forward today?"
+      </div>
+    </div>
+
+    <div class="listen">
+      <div class="listen-label">Listen for — buying signals</div>
+      "What does the process look like?" — they're sold on the idea, evaluating the execution. Answer with specifics: tools, timeline, your involvement, what they need to provide. "Can I think about it?" — see objections below. "What if we did both gates?" — this is an upsell opportunity, not a complication. Quote a bundled price and a two-phase timeline.
+    </div>
+
+    <div style="margin-top:16px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Decision & next step agreed</div>
+      <textarea class="notes-area" style="min-height:56px" placeholder="What did they decide? What is the exact next step and date?"></textarea>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── SECTION 6: OBJECTIONS ── -->
+  <div class="agenda-section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-meta">
+        <div class="section-tag">Reference — use as needed</div>
+        <div class="section-title">Objection handling</div>
+        <div class="section-time">⏱ Respond, then return to next step</div>
+      </div>
+    </div>
+
+    <div class="scorecard" style="border-radius:10px;overflow:hidden">
+      <table class="objection-table">
+        <thead>
+          <tr>
+            <th>Objection</th>
+            <th>Response</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"I need to think about it."</td>
+            <td>
+              "Completely fair. While you do — I'd ask you to track, just for one week, how many minutes you spend on [the constraint activity]. Most coaches come back and say the number surprised them."
+              <div style="margin-top:6px;font-size:11px;color:var(--ink3)">Then: set a specific follow-up date before you hang up. "Should we speak again Thursday?"</div>
+            </td>
+          </tr>
+          <tr>
+            <td>"I don't have the budget right now."</td>
+            <td>
+              "Let me ask you this — what's one client worth at your current program price? [Pause.] That's the question on the table. Is this a budget issue or a priority issue?"
+              <div style="margin-top:6px;font-size:11px;color:var(--ink3)">If genuine budget constraint: offer a payment plan. Two instalments, 50% on kick-off.</div>
+            </td>
+          </tr>
+          <tr>
+            <td>"I already have Calendly / Typeform."</td>
+            <td>
+              "Having the tool and having the system are two different things. The audit shows the tools exist but aren't connected in a way that removes the manual steps. That's exactly what the implementation does."
+            </td>
+          </tr>
+          <tr>
+            <td>"Can't I just do this myself?"</td>
+            <td>
+              "You can. And if you do, I'd encourage you to time how long it takes. The package covers the build, the testing, the Zapier logic, and the configuration — not just knowing what to set up. Most coaches who try this themselves spend 15+ hours and still have gaps."
+            </td>
+          </tr>
+          <tr>
+            <td>"What about the other two gates?"</td>
+            <td>
+              "Great question — that's Phase 2. TOC is explicit: fix the primary constraint first or improving the others won't show up in revenue. Once Gate [X] is stable, we come back and address Gate [Y]. I can quote you a bundled rate for both phases if you want to plan the full roadmap now."
+            </td>
+          </tr>
+          <tr>
+            <td>"I need to speak to my partner / team."</td>
+            <td>
+              "Of course. What's the best way to include them — could we do a quick 15-minute call with both of you this week so I can walk through the numbers directly?"
+              <div style="margin-top:6px;font-size:11px;color:var(--ink3)">Avoid email-only follow-ups for this objection — decisions made asynchronously rarely close.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Post-call actions</div>
+      <div class="steps">
+        <div class="step-row">
+          <div class="step-check" onclick="toggleCheck(this)"></div>
+          <div>Send follow-up email within 2 hours: include the constraint name, the revenue leak figure, the package proposed, the price, and the exact next step.</div>
+        </div>
+        <div class="step-row">
+          <div class="step-check" onclick="toggleCheck(this)"></div>
+          <div>Complete the Post-Audit Notes section of the BPO Framework document with call observations.</div>
+        </div>
+        <div class="step-row">
+          <div class="step-check" onclick="toggleCheck(this)"></div>
+          <div>Add constraint pattern to your bottleneck database — note their industry, program price point, and which gate scored highest.</div>
+        </div>
+        <div class="step-row">
+          <div class="step-check" onclick="toggleCheck(this)"></div>
+          <div>If no decision: calendar the follow-up before closing the browser.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+// ── Timer ──────────────────────────────────────────────────────────────
+let seconds = 30 * 60;
+let running = false;
+let interval;
+
+function toggleTimer() {
+  if (!running) {
+    running = true;
+    document.getElementById('timer-btn').innerHTML = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="1" y="1" width="3" height="10" rx="1" fill="currentColor"/><rect x="6" y="1" width="3" height="10" rx="1" fill="currentColor"/></svg> Pause`;
+    interval = setInterval(() => {
+      seconds--;
+      if (seconds < 0) seconds = 0;
+      updateTimerDisplay();
+    }, 1000);
+  } else {
+    running = false;
+    clearInterval(interval);
+    document.getElementById('timer-btn').innerHTML = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M2 1l7 5-7 5V1z" fill="currentColor"/></svg> Resume`;
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'timer-display' + (seconds < 300 && seconds > 0 ? ' warn' : seconds === 0 ? ' over' : '');
+}
+
+// ── Checkbox toggles ───────────────────────────────────────────────────
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+// ── Nav active ─────────────────────────────────────────────────────────
+function markActive(el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── Offer selection ────────────────────────────────────────────────────
+function selectOffer(gate) {
+  ['g1','g2','g3'].forEach(g => document.getElementById('offer-'+g).classList.remove('selected'));
+  document.getElementById('offer-'+gate).classList.add('selected');
+  updateCalc();
+}
+
+// ── Live calculations ──────────────────────────────────────────────────
+function n(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+
+function updateCalc() {
+  const visitors  = n('c-visitors');
+  const inquiries = n('c-inquiries');
+  const calls     = n('c-calls');
+  const noshows   = n('c-noshows');
+  const clients   = n('c-clients');
+  const progval   = n('c-progval') || 2500;
+  const price     = n('pkg-price');
+  const hrsSaved  = n('hrs-saved');
+  const coachRate = n('coach-rate') || 200;
+
+  // Inline script values
+  if (inquiries > 0 && visitors > 0) {
+    const rate = (inquiries / visitors * 100).toFixed(1);
+    document.getElementById('inq-rate-inline').textContent = rate + '%';
+  }
+
+  // Close rate
+  const showed = calls - noshows;
+  const cr = showed > 0 ? clients / showed : 0.45;
+
+  // Leak calculation
+  const nsLeak = noshows * progval * cr;
+  const adminHrs = n('c-visits'); // won't exist, use hrs-saved proxy
+  const totalLeak = nsLeak;
+
+  if (inquiries > 0) {
+    document.getElementById('leak-inline').textContent = '$' + Math.round(nsLeak + (hrsSaved * coachRate * 4.3)).toLocaleString();
+  }
+
+  // ROI calc
+  const monthlyAdminSaving = hrsSaved * coachRate * 4.3;
+  const monthsToROI = price > 0 && (monthlyAdminSaving + nsLeak) > 0
+    ? (price / (monthlyAdminSaving + nsLeak)).toFixed(1)
+    : null;
+
+  const roiEl = document.getElementById('roi-calc');
+  if (price > 0) {
+    roiEl.innerHTML = monthsToROI
+      ? `Package investment: <strong>$${price.toLocaleString()}</strong> &nbsp;·&nbsp; Monthly recovery: <strong>$${Math.round(monthlyAdminSaving + nsLeak).toLocaleString()}</strong><span class="roi-number">Pays for itself in ${monthsToROI} month${monthsToROI == 1 ? '' : 's'}</span>`
+      : `Package investment: <strong>$${price.toLocaleString()}</strong> &nbsp;·&nbsp; Enter savings data for ROI calculation.`;
+  }
+
+  // Offer script
+  const payback = monthsToROI && parseFloat(monthsToROI) <= 1
+    ? 'the first recovered client'
+    : (monthsToROI ? `${monthsToROI} months` : 'the first billing cycle');
+  document.getElementById('price-inline').textContent = price > 0 ? `$${price.toLocaleString()}` : '$[X]';
+  document.getElementById('payback-inline').textContent = payback;
+
+  // Reveal script
+  if (noshows > 0 && progval > 0) {
+    document.getElementById('reveal-inquiries').textContent = inquiries || '[X]';
+    document.getElementById('reveal-progval').textContent = progval ? `$${progval.toLocaleString()}` : '$[X]';
+    document.getElementById('reveal-leak-sentence').textContent =
+      `every month you're leaving ~$${Math.round(nsLeak).toLocaleString()} on the table from unrecovered no-shows alone`;
+    document.getElementById('leak-display').textContent = '$' + Math.round(nsLeak + monthlyAdminSaving).toLocaleString();
+  }
+}
+
+function updateName() {
+  const name = document.getElementById('coach-name').value;
+  if (name) document.title = `Discovery Call — ${name}`;
+}
+
+// ── Scorecard ──────────────────────────────────────────────────────────
+function updateScorecard() {
+  const g1 = parseInt(document.getElementById('g1-score').value) || null;
+  const g2 = parseInt(document.getElementById('g2-score').value) || null;
+  const g3 = parseInt(document.getElementById('g3-score').value) || null;
+
+  function setStatus(id, score) {
+    const el = document.getElementById(id);
+    if (score === null) { el.className = 'gate-status status-pending'; el.textContent = 'Pending'; return; }
+    if (score >= 13) { el.className = 'gate-status status-critical'; el.textContent = 'Critical'; }
+    else if (score >= 8) { el.className = 'gate-status status-moderate'; el.textContent = 'Moderate'; }
+    else { el.className = 'gate-status status-low'; el.textContent = 'Low'; }
+  }
+
+  setStatus('g1-status', g1);
+  setStatus('g2-status', g2);
+  setStatus('g3-status', g3);
+
+  // Sidebar
+  function sbClass(score) {
+    if (!score) return '';
+    if (score >= 13) return 'filled critical';
+    if (score >= 8) return 'filled moderate';
+    return 'filled';
+  }
+
+  const sbG1 = document.getElementById('sb-g1');
+  const sbG2 = document.getElementById('sb-g2');
+  const sbG3 = document.getElementById('sb-g3');
+  sbG1.textContent = g1 !== null ? `${g1}/20` : '—';
+  sbG1.className = 'mini-score-val ' + sbClass(g1);
+  sbG2.textContent = g2 !== null ? `${g2}/20` : '—';
+  sbG2.className = 'mini-score-val ' + sbClass(g2);
+  sbG3.textContent = g3 !== null ? `${g3}/20` : '—';
+  sbG3.className = 'mini-score-val ' + sbClass(g3);
+
+  // Primary constraint
+  const scores = [
+    { name: 'Gate 1 — Scheduling', val: g1, offerId: 'g1' },
+    { name: 'Gate 2 — Qualification', val: g2, offerId: 'g2' },
+    { name: 'Gate 3 — Onboarding', val: g3, offerId: 'g3' },
+  ].filter(s => s.val !== null);
+
+  if (scores.length > 0) {
+    const primary = scores.reduce((a, b) => a.val > b.val ? a : b);
+    document.getElementById('primary-display').textContent = primary.name;
+    document.getElementById('sb-primary').textContent = primary.name.split('—')[1].trim();
+    document.getElementById('reveal-gate').textContent = primary.name;
+    selectOffer(primary.offerId);
+  }
+}
+</script>
+</body>
+</html>

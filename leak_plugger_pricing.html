@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leak Plugger — Implementation Package Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:    #FAF8F3;
+  --cream2:   #F2EFE8;
+  --cream3:   #E8E4DA;
+  --ink:      #0E1B2C;
+  --ink2:     #2D3F52;
+  --ink3:     #6B7A8D;
+  --ink4:     #9AABB8;
+  --gold:     #B08D4A;
+  --gold-lt:  #F5EDD8;
+  --gold-bdr: #DCC78A;
+  --navy:     #0E2A4A;
+  --teal:     #0A5C48;
+  --teal-lt:  #E6F5F1;
+  --coral:    #8C2E1A;
+  --coral-lt: #FAEEEA;
+  --rule:     #D8D2C6;
+  --mono:     'DM Mono', monospace;
+  --body:     'Instrument Sans', sans-serif;
+  --display:  'Cormorant Garamond', Georgia, serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page wrapper ── */
+.page {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 32px 100px;
+}
+
+/* ── Masthead ── */
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  padding: 48px 0 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 32px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.masthead-overline {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 10px;
+}
+
+.masthead-title {
+  font-family: var(--display);
+  font-size: 52px;
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.masthead-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold);
+}
+
+.masthead-meta {
+  text-align: right;
+}
+
+.masthead-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  line-height: 1.7;
+}
+
+.prepared-for {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+/* ── Constraint callout ── */
+.constraint-bar {
+  background: var(--navy);
+  color: #FFFFFF;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 0;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.cb-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cb-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  white-space: nowrap;
+}
+
+.cb-gate {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.cb-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.15);
+  flex-shrink: 0;
+}
+
+.cb-leak {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: #F6AD55;
+  white-space: nowrap;
+}
+
+.cb-leak-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-top: 1px;
+  white-space: nowrap;
+}
+
+.cb-rec {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.4;
+  max-width: 300px;
+  text-align: right;
+}
+
+.cb-rec strong { color: #FFFFFF; font-weight: 600; }
+
+/* ── Calculator bar ── */
+.calc-bar {
+  background: var(--cream2);
+  border: 1px solid var(--rule);
+  border-top: none;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+  animation: fadeUp 0.6s 0.15s ease both;
+}
+
+.calc-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+.calc-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calc-input {
+  width: 100px;
+  background: var(--cream);
+  border: 1px solid var(--cream3);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.calc-input:focus { border-color: var(--gold); }
+
+.calc-result {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+.calc-result strong { color: var(--teal); font-size: 14px; }
+
+/* ── Section header ── */
+.section-hd {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-hd-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.section-hd-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+.section-title {
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 10px;
+  line-height: 1.15;
+}
+
+.section-sub {
+  font-size: 14px;
+  color: var(--ink3);
+  margin-bottom: 36px;
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+/* ── Package cards ── */
+.packages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--ink);
+  margin-bottom: 60px;
+  animation: fadeUp 0.6s 0.25s ease both;
+}
+
+.pkg {
+  border-right: 1.5px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.pkg:last-child { border-right: none; }
+
+.pkg.featured {
+  background: var(--navy);
+  color: #FFFFFF;
+}
+
+.pkg-badge {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 14px;
+  white-space: nowrap;
+}
+
+/* Package header */
+.pkg-head {
+  padding: 28px 24px 22px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.pkg.featured .pkg-head {
+  border-bottom-color: rgba(255,255,255,0.12);
+}
+
+.pkg-gate {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 6px;
+}
+
+.pkg.featured .pkg-gate { color: rgba(255,255,255,0.4); }
+
+.pkg-name {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.pkg.featured .pkg-name { color: #FFFFFF; }
+
+.pkg-tagline {
+  font-size: 12.5px;
+  color: var(--ink3);
+  line-height: 1.5;
+}
+
+.pkg.featured .pkg-tagline { color: rgba(255,255,255,0.55); }
+
+/* Price */
+.pkg-price-block {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.pkg.featured .pkg-price-block { border-bottom-color: rgba(255,255,255,0.12); }
+
+.pkg-currency {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--ink3);
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+.pkg.featured .pkg-currency { color: rgba(255,255,255,0.4); }
+
+.pkg-price {
+  font-family: var(--display);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.pkg.featured .pkg-price { color: #FFFFFF; }
+
+.pkg-price-note {
+  font-size: 11.5px;
+  color: var(--ink3);
+  align-self: flex-end;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.pkg.featured .pkg-price-note { color: rgba(255,255,255,0.4); }
+
+/* Payback badge */
+.pkg-payback {
+  margin: 0 24px;
+  padding: 8px 12px;
+  background: var(--teal-lt);
+  border: 1px solid #A0D9C8;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.pkg.featured .pkg-payback {
+  background: rgba(10,92,72,0.3);
+  border-color: rgba(160,217,200,0.3);
+  color: #7FD4C0;
+}
+
+.pkg-payback-val { font-weight: 500; }
+
+/* Stack (tool) */
+.pkg-stack {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pkg.featured .pkg-stack { border-bottom-color: rgba(255,255,255,0.12); }
+
+.tool-pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  background: var(--cream2);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+
+.pkg.featured .tool-pill {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+}
+
+/* Timeline */
+.pkg-timeline {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pkg.featured .pkg-timeline { border-bottom-color: rgba(255,255,255,0.12); }
+
+.tl-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--cream3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.pkg.featured .tl-bar { background: rgba(255,255,255,0.1); }
+
+.tl-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+.tl-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+.pkg.featured .tl-label { color: rgba(255,255,255,0.45); }
+
+/* Deliverables */
+.pkg-deliverables {
+  padding: 20px 24px;
+  flex: 1;
+}
+
+.deliv-section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 10px;
+}
+
+.pkg.featured .deliv-section-label { color: rgba(255,255,255,0.35); }
+
+.deliv-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 5px 0;
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.5;
+  border-bottom: 1px solid var(--cream2);
+}
+
+.pkg.featured .deliv-item {
+  color: rgba(255,255,255,0.75);
+  border-bottom-color: rgba(255,255,255,0.07);
+}
+
+.deliv-item:last-child { border-bottom: none; }
+
+.deliv-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+/* Root cause tag */
+.pkg-root {
+  padding: 14px 24px;
+  border-top: 1.5px solid var(--rule);
+  font-size: 12px;
+  color: var(--ink3);
+  line-height: 1.5;
+}
+
+.pkg.featured .pkg-root {
+  border-top-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.4);
+}
+
+.pkg-root strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  color: var(--ink3);
+}
+
+.pkg.featured .pkg-root strong { color: rgba(255,255,255,0.3); }
+
+/* CTA row */
+.pkg-cta {
+  padding: 16px 24px 22px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  transition: all 0.18s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+
+.btn.primary:hover {
+  background: #C9A55E;
+  border-color: #C9A55E;
+}
+
+/* ── Scope comparison table ── */
+.scope-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 60px;
+  border: 1.5px solid var(--ink);
+  animation: fadeUp 0.6s 0.35s ease both;
+}
+
+.scope-table th {
+  padding: 12px 18px;
+  text-align: left;
+  background: var(--ink);
+  color: #FFFFFF;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  border-right: 1px solid rgba(255,255,255,0.12);
+}
+
+.scope-table th:first-child { width: 240px; }
+.scope-table th:last-child { border-right: none; }
+
+.scope-table td {
+  padding: 11px 18px;
+  font-size: 13px;
+  color: var(--ink2);
+  border-bottom: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.scope-table tr:last-child td { border-bottom: none; }
+.scope-table td:last-child { border-right: none; }
+.scope-table tr:nth-child(even) td { background: var(--cream2); }
+
+.scope-table td:first-child {
+  font-weight: 500;
+  color: var(--ink);
+  font-size: 12.5px;
+}
+
+.check { color: var(--teal); font-size: 13px; }
+.cross { color: var(--ink4); font-size: 13px; }
+.partial { color: var(--gold); font-size: 11px; font-family: var(--mono); }
+
+/* ── Guarantee block ── */
+.guarantee {
+  border: 1.5px solid var(--ink);
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  margin-bottom: 60px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.guarantee-seal {
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: center;
+  line-height: 1.3;
+  padding: 20px 10px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  letter-spacing: 0.1em;
+}
+
+.guarantee-body {
+  padding: 24px 28px;
+}
+
+.guarantee-title {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.guarantee-text {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.65;
+  max-width: 680px;
+}
+
+/* ── Process timeline ── */
+.process-timeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--ink);
+  margin-bottom: 60px;
+  animation: fadeUp 0.6s 0.45s ease both;
+}
+
+.pt-step {
+  padding: 20px 18px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+
+.pt-step:last-child { border-right: none; }
+
+.pt-day {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 6px;
+}
+
+.pt-title {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.pt-desc {
+  font-size: 12px;
+  color: var(--ink3);
+  line-height: 1.5;
+}
+
+.pt-connector {
+  position: absolute;
+  top: 28px;
+  right: -7px;
+  width: 13px;
+  height: 13px;
+  background: var(--cream);
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.pt-step:last-child .pt-connector { display: none; }
+
+/* ── Pricing logic ── */
+.pricing-logic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 60px;
+  animation: fadeUp 0.6s 0.5s ease both;
+}
+
+.pl-box {
+  border: 1px solid var(--rule);
+  padding: 24px;
+}
+
+.pl-title {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+
+.pl-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cream2);
+  font-size: 13px;
+}
+
+.pl-item:last-child { border-bottom: none; }
+
+.pl-item-label { color: var(--ink2); }
+.pl-item-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.pl-note {
+  font-size: 12px;
+  color: var(--ink3);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  line-height: 1.55;
+}
+
+/* ── Next steps ── */
+.next-steps {
+  border-top: 2px solid var(--ink);
+  padding-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  animation: fadeUp 0.6s 0.55s ease both;
+}
+
+.ns-col-title {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+.ns-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.ns-num {
+  width: 24px; height: 24px;
+  background: var(--ink);
+  color: var(--cream);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.ns-text { font-size: 13px; color: var(--ink2); line-height: 1.5; }
+.ns-text strong { color: var(--ink); font-weight: 600; }
+
+/* ── Footer ── */
+.doc-footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink4);
+  letter-spacing: 0.05em;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Print ── */
+@media print {
+  body { background: white; }
+  .calc-bar { display: none; }
+  .packages, .scope-table, .guarantee, .process-timeline { page-break-inside: avoid; }
+  .pkg.featured { background: #0E2A4A; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @page { margin: 20mm; }
+}
+
+@media (max-width: 820px) {
+  .packages { grid-template-columns: 1fr; }
+  .pkg { border-right: none; border-bottom: 1.5px solid var(--ink); }
+  .pkg:last-child { border-bottom: none; }
+  .process-timeline { grid-template-columns: 1fr 1fr; }
+  .pricing-logic, .next-steps { grid-template-columns: 1fr; }
+  .masthead { grid-template-columns: 1fr; }
+  .masthead-meta { text-align: left; }
+  .constraint-bar { flex-direction: column; align-items: flex-start; }
+  .cb-rec { text-align: left; max-width: none; }
+  .scope-table { display: block; overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── MASTHEAD ── -->
+  <div class="masthead">
+    <div>
+      <div class="masthead-overline">Business Process Optimisation · Tier 1 Implementation</div>
+      <div class="masthead-title">The <em>Leak Plugger</em><br>Package Pricing</div>
+    </div>
+    <div class="masthead-meta">
+      <div class="masthead-date">
+        Prepared: <span id="doc-date">—</span><br>
+        Valid for 14 days
+      </div>
+      <div class="prepared-for" id="prepared-for">Coaching Business Audit</div>
+    </div>
+  </div>
+
+  <!-- ── CONSTRAINT CALLOUT ── -->
+  <div class="constraint-bar">
+    <div class="cb-left">
+      <div>
+        <div class="cb-label">Primary constraint identified</div>
+        <div class="cb-gate" id="cb-gate-display">Gate — awaiting audit data</div>
+      </div>
+      <div class="cb-divider"></div>
+      <div>
+        <div class="cb-leak" id="cb-leak-display">$—</div>
+        <div class="cb-leak-label">Estimated monthly leak</div>
+      </div>
+    </div>
+    <div class="cb-rec" id="cb-rec-display">
+      Enter your audit numbers in the calculator below to generate personalised ROI figures.
+    </div>
+  </div>
+
+  <!-- ── CALCULATOR ── -->
+  <div class="calc-bar">
+    <div class="calc-label">Personalise figures</div>
+    <div class="calc-group">
+      <span class="calc-label">Program value $</span>
+      <input class="calc-input" type="number" id="calc-pv" placeholder="3000" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <span class="calc-label">No-shows / mo</span>
+      <input class="calc-input" type="number" id="calc-ns" placeholder="5" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <span class="calc-label">Close rate %</span>
+      <input class="calc-input" type="number" id="calc-cr" placeholder="50" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <span class="calc-label">Admin hrs / wk</span>
+      <input class="calc-input" type="number" id="calc-ah" placeholder="8" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <span class="calc-label">Hourly rate $</span>
+      <input class="calc-input" type="number" id="calc-hr" placeholder="200" oninput="recalc()">
+    </div>
+    <div class="calc-result" id="calc-result-line">← Fill in your numbers</div>
+  </div>
+
+  <!-- ── PACKAGES ── -->
+  <div class="section-hd">
+    <div class="section-hd-label">The three packages</div>
+    <div class="section-hd-rule"></div>
+  </div>
+  <div class="section-sub">Each package targets one gate — the binding constraint identified in the audit. The highest-scoring gate is fixed first; everything else is sequenced behind it. Prices are fixed-scope; no hourly billing.</div>
+
+  <div class="packages">
+
+    <!-- G1: Scheduling -->
+    <div class="pkg" id="pkg-g1">
+      <div class="pkg-head">
+        <div class="pkg-gate">Gate 1 · Scheduling</div>
+        <div class="pkg-name">Scheduling<br>Leak Plugger</div>
+        <div class="pkg-tagline">Eliminates calendar friction, no-shows, and unrecovered ghosted bookings.</div>
+      </div>
+      <div class="pkg-price-block">
+        <span class="pkg-currency">$</span>
+        <span class="pkg-price" id="price-g1">2,200</span>
+        <span class="pkg-price-note">fixed scope<br>one payment</span>
+      </div>
+      <div class="pkg-payback" id="payback-g1">
+        <span>↩ Pays back in</span>
+        <span class="pkg-payback-val" id="pb-g1-val">~ 1 recovered call</span>
+      </div>
+      <div class="pkg-stack">
+        <span class="tool-pill">Calendly</span>
+        <span class="tool-pill">Zapier</span>
+        <span class="tool-pill">Email / SMS</span>
+      </div>
+      <div class="pkg-timeline">
+        <span class="tl-label">Timeline</span>
+        <div class="tl-bar"><div class="tl-fill" style="width:55%"></div></div>
+        <span class="tl-label">5–7 days</span>
+      </div>
+      <div class="pkg-deliverables">
+        <div class="deliv-section-label">Deliverables included</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Calendly booking page configured with intake questions and availability rules</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Automated confirmation email sequence (immediate + 24 hr + 1 hr reminders)</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>No-show re-engagement Zap: triggers rescue email + re-book link within 15 minutes</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Zapier workflow connecting booking → CRM / Notion / Airtable log</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Rescheduling flow with automated follow-up if no new date is selected</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Live test + 30-day monitoring check-in</div>
+      </div>
+      <div class="pkg-root">
+        <strong>Root cause addressed</strong>
+        Human dependency — removes all manual touchpoints between inquiry and confirmed call.
+      </div>
+      <div class="pkg-cta">
+        <a href="#next-steps" class="btn">Select this package →</a>
+      </div>
+    </div>
+
+    <!-- G2: Qualification — FEATURED -->
+    <div class="pkg featured" id="pkg-g2">
+      <div class="pkg-badge">Most common constraint</div>
+      <div class="pkg-head">
+        <div class="pkg-gate">Gate 2 · Qualification</div>
+        <div class="pkg-name">Qualification<br>Leak Plugger</div>
+        <div class="pkg-tagline">Stops bad-fit leads reaching your calendar — before they waste your time.</div>
+      </div>
+      <div class="pkg-price-block">
+        <span class="pkg-currency">$</span>
+        <span class="pkg-price" id="price-g2">1,800</span>
+        <span class="pkg-price-note">fixed scope<br>one payment</span>
+      </div>
+      <div class="pkg-payback" id="payback-g2">
+        <span>↩ Pays back in</span>
+        <span class="pkg-payback-val" id="pb-g2-val">~ 2 hours saved</span>
+      </div>
+      <div class="pkg-stack">
+        <span class="tool-pill">Typeform</span>
+        <span class="tool-pill">Calendly</span>
+        <span class="tool-pill">Zapier</span>
+      </div>
+      <div class="pkg-timeline">
+        <span class="tl-label">Timeline</span>
+        <div class="tl-bar"><div class="tl-fill" style="width:42%"></div></div>
+        <span class="tl-label">4–6 days</span>
+      </div>
+      <div class="pkg-deliverables">
+        <div class="deliv-section-label">Deliverables included</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Typeform pre-call application (8–10 questions: budget, timeline, goals, fit signals)</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Conditional logic: qualified leads unlock Calendly; unqualified receive a graceful decline</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Zapier routing: qualified responses tagged + logged; review summary delivered to you daily</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Disqualification email template (professional, non-burning bridge)</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Nurture sequence for "not yet" leads (3-email drip over 6 weeks)</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Live test + 30-day monitoring check-in</div>
+      </div>
+      <div class="pkg-root">
+        <strong>Root cause addressed</strong>
+        Missing system — installs a filter that never existed, protecting your calendar and your energy.
+      </div>
+      <div class="pkg-cta">
+        <a href="#next-steps" class="btn primary">Select this package →</a>
+      </div>
+    </div>
+
+    <!-- G3: Onboarding -->
+    <div class="pkg" id="pkg-g3">
+      <div class="pkg-head">
+        <div class="pkg-gate">Gate 3 · Onboarding</div>
+        <div class="pkg-name">Onboarding<br>Leak Plugger</div>
+        <div class="pkg-tagline">Closes the ghost window between verbal yes and paid client — automatically.</div>
+      </div>
+      <div class="pkg-price-block">
+        <span class="pkg-currency">$</span>
+        <span class="pkg-price" id="price-g3">2,800</span>
+        <span class="pkg-price-note">fixed scope<br>one payment</span>
+      </div>
+      <div class="pkg-payback" id="payback-g3">
+        <span>↩ Pays back in</span>
+        <span class="pkg-payback-val" id="pb-g3-val">~ 1 recovered client</span>
+      </div>
+      <div class="pkg-stack">
+        <span class="tool-pill">Stripe</span>
+        <span class="tool-pill">DocuSign</span>
+        <span class="tool-pill">Zapier</span>
+        <span class="tool-pill">Email</span>
+      </div>
+      <div class="pkg-timeline">
+        <span class="tl-label">Timeline</span>
+        <div class="tl-bar"><div class="tl-fill" style="width:68%"></div></div>
+        <span class="tl-label">7–10 days</span>
+      </div>
+      <div class="pkg-deliverables">
+        <div class="deliv-section-label">Deliverables included</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Stripe payment link configured for program (one-time or instalment plan)</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>DocuSign contract template with your program terms, auto-sent on verbal yes trigger</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Zapier sequence: signed contract → payment link delivered within 2 minutes</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Payment confirmation → automated welcome email + kickoff booking link</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Ghost recovery sequence: 24 hr + 72 hr nudge if contract unsigned or payment incomplete</div>
+        <div class="deliv-item"><span class="deliv-dot"></span>Live test + 30-day monitoring check-in</div>
+      </div>
+      <div class="pkg-root">
+        <strong>Root cause addressed</strong>
+        Broken handoff — connects verbal yes directly to signed contract and cleared payment with zero manual steps.
+      </div>
+      <div class="pkg-cta">
+        <a href="#next-steps" class="btn">Select this package →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SCOPE COMPARISON ── -->
+  <div class="section-hd">
+    <div class="section-hd-label">Scope comparison</div>
+    <div class="section-hd-rule"></div>
+  </div>
+  <div class="section-sub">What each package includes and excludes. All packages include a 30-day monitoring check-in and a post-implementation review call.</div>
+
+  <table class="scope-table">
+    <thead>
+      <tr>
+        <th>Included in scope</th>
+        <th>Scheduling LP</th>
+        <th>Qualification LP</th>
+        <th>Onboarding LP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Audit of existing tools at the gate</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>Full system build in low-code tools</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>Zapier automation logic and testing</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>Email copy for automated sequences</td>
+        <td><span class="check">✔</span> (3 emails)</td>
+        <td><span class="check">✔</span> (5 emails)</td>
+        <td><span class="check">✔</span> (4 emails)</td>
+      </tr>
+      <tr>
+        <td>CRM / tracker integration</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+        <td><span class="partial">add-on</span></td>
+      </tr>
+      <tr>
+        <td>Contract template drafting</td>
+        <td><span class="cross">—</span></td>
+        <td><span class="cross">—</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>Nurture / drip sequence for warm leads</td>
+        <td><span class="cross">—</span></td>
+        <td><span class="check">✔</span> (3 emails)</td>
+        <td><span class="cross">—</span></td>
+      </tr>
+      <tr>
+        <td>Ghost recovery sequence</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="cross">—</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>Training walkthrough (Loom video)</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>30-day post-launch monitoring check-in</td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+        <td><span class="check">✔</span></td>
+      </tr>
+      <tr>
+        <td>Build time (consultant hours)</td>
+        <td>4–6 hrs</td>
+        <td>3–5 hrs</td>
+        <td>5–8 hrs</td>
+      </tr>
+      <tr>
+        <td>Tool costs (client-owned accounts)</td>
+        <td>Calendly + Zapier<br><span style="font-size:11px;color:var(--ink3)">~$30–55/mo</span></td>
+        <td>Typeform + Calendly<br><span style="font-size:11px;color:var(--ink3)">~$25–45/mo</span></td>
+        <td>Stripe + DocuSign + Zapier<br><span style="font-size:11px;color:var(--ink3)">~$40–70/mo + Stripe %</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── DELIVERY TIMELINE ── -->
+  <div class="section-hd">
+    <div class="section-hd-label">Implementation timeline</div>
+    <div class="section-hd-rule"></div>
+  </div>
+  <div class="section-sub">Every package follows the same five-phase delivery process. Timeline varies by package complexity.</div>
+
+  <div class="process-timeline">
+    <div class="pt-step">
+      <div class="pt-connector"></div>
+      <div class="pt-day">Day 1</div>
+      <div class="pt-title">Kickoff & access</div>
+      <div class="pt-desc">30-min call. You share tool logins and program details. Constraints confirmed.</div>
+    </div>
+    <div class="pt-step">
+      <div class="pt-connector"></div>
+      <div class="pt-day">Days 2–3</div>
+      <div class="pt-title">Build & configure</div>
+      <div class="pt-desc">All tools connected, sequences written, automation logic built and tested internally.</div>
+    </div>
+    <div class="pt-step">
+      <div class="pt-connector"></div>
+      <div class="pt-day">Day 4–5</div>
+      <div class="pt-title">Review & revise</div>
+      <div class="pt-desc">You review the full system. One round of revisions included. Email copy signed off.</div>
+    </div>
+    <div class="pt-step">
+      <div class="pt-connector"></div>
+      <div class="pt-day">Day 6–7</div>
+      <div class="pt-title">Go live</div>
+      <div class="pt-desc">System activated. Loom walkthrough delivered. Live test run with a real inquiry.</div>
+    </div>
+    <div class="pt-step">
+      <div class="pt-day">Day 30</div>
+      <div class="pt-title">Check-in</div>
+      <div class="pt-desc">Review metrics. Confirm the constraint has moved. Identify next gate for Phase 2.</div>
+    </div>
+  </div>
+
+  <!-- ── PRICING LOGIC ── -->
+  <div class="section-hd">
+    <div class="section-hd-label">Pricing structure</div>
+    <div class="section-hd-rule"></div>
+  </div>
+
+  <div class="pricing-logic">
+    <div class="pl-box">
+      <div class="pl-title">Standard package rates</div>
+      <div class="pl-item"><span class="pl-item-label">Scheduling Leak Plugger</span><span class="pl-item-val">$2,200</span></div>
+      <div class="pl-item"><span class="pl-item-label">Qualification Leak Plugger</span><span class="pl-item-val">$1,800</span></div>
+      <div class="pl-item"><span class="pl-item-label">Onboarding Leak Plugger</span><span class="pl-item-val">$2,800</span></div>
+      <div class="pl-item"><span class="pl-item-label">Dual-gate bundle (any two)</span><span class="pl-item-val" id="bundle-price">$4,200 <span style="font-size:10px;color:var(--ink3)">(save $800)</span></span></div>
+      <div class="pl-item"><span class="pl-item-label">Full pipeline (all three gates)</span><span class="pl-item-val" id="full-price">$6,000 <span style="font-size:10px;color:var(--ink3)">(save $800)</span></span></div>
+      <div class="pl-note">All prices in USD. Payment due on kickoff. Instalment option available: 50% kickoff, 50% on go-live.</div>
+    </div>
+    <div class="pl-box">
+      <div class="pl-title">What determines the price</div>
+      <div class="pl-item"><span class="pl-item-label">Build complexity (hrs × rate)</span><span class="pl-item-val">primary factor</span></div>
+      <div class="pl-item"><span class="pl-item-label">Number of Zaps / automations</span><span class="pl-item-val">scope variable</span></div>
+      <div class="pl-item"><span class="pl-item-label">Email copy included</span><span class="pl-item-val">fixed per package</span></div>
+      <div class="pl-item"><span class="pl-item-label">Post-launch monitoring (30 days)</span><span class="pl-item-val">all packages</span></div>
+      <div class="pl-item"><span class="pl-item-label">ROI threshold (min. 3× payback)</span><span class="pl-item-val">pricing anchor</span></div>
+      <div class="pl-note">Pricing is anchored to the constraint's revenue leak — each package is designed to deliver a minimum 3× return within the first 90 days based on the coach's own audit numbers.</div>
+    </div>
+  </div>
+
+  <!-- ── GUARANTEE ── -->
+  <div class="guarantee">
+    <div class="guarantee-seal">ROI<br>Guarantee</div>
+    <div class="guarantee-body">
+      <div class="guarantee-title">The constraint must move — or we fix it for free.</div>
+      <div class="guarantee-text">
+        Every package comes with a performance guarantee: if the primary metric at the targeted gate does not measurably improve within 30 days of go-live — show rate, qualification rate, or time-to-payment — I will diagnose the cause and rebuild the relevant component at no additional charge. This guarantee is unconditional and does not require you to prove the outcome was my fault. If it did not work, we fix it. The only requirement is that you run at least 10 inquiries through the system in the 30-day window so we have data to evaluate.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NEXT STEPS ── -->
+  <a id="next-steps"></a>
+  <div class="section-hd">
+    <div class="section-hd-label">How to proceed</div>
+    <div class="section-hd-rule"></div>
+  </div>
+
+  <div class="next-steps">
+    <div>
+      <div class="ns-col-title">To start an engagement</div>
+      <div class="ns-step">
+        <div class="ns-num">1</div>
+        <div class="ns-text"><strong>Confirm the package</strong> — reply to this proposal with the gate you want to fix. If you are unsure, reference the TOC scorecard from the diagnostic call.</div>
+      </div>
+      <div class="ns-step">
+        <div class="ns-num">2</div>
+        <div class="ns-text"><strong>Sign the engagement letter</strong> — a one-page scope confirmation is sent within 24 hours. Countersign and return.</div>
+      </div>
+      <div class="ns-step">
+        <div class="ns-num">3</div>
+        <div class="ns-text"><strong>Kickoff payment</strong> — 100% upfront or 50% now / 50% on go-live. Payment triggers the kickoff call booking.</div>
+      </div>
+      <div class="ns-step">
+        <div class="ns-num">4</div>
+        <div class="ns-text"><strong>Kickoff call booked</strong> — system is live within 7 business days of the kickoff call.</div>
+      </div>
+    </div>
+    <div>
+      <div class="ns-col-title">What is not in scope</div>
+      <div class="ns-step">
+        <div class="ns-num" style="background:var(--cream3);color:var(--ink3)">✕</div>
+        <div class="ns-text">Full CRM implementation or migration from existing platforms</div>
+      </div>
+      <div class="ns-step">
+        <div class="ns-num" style="background:var(--cream3);color:var(--ink3)">✕</div>
+        <div class="ns-text">Copywriting for sales pages, social content, or long-form assets</div>
+      </div>
+      <div class="ns-step">
+        <div class="ns-num" style="background:var(--cream3);color:var(--ink3)">✕</div>
+        <div class="ns-text">Ongoing system management after the 30-day monitoring window (available as a retainer)</div>
+      </div>
+      <div class="ns-step">
+        <div class="ns-num" style="background:var(--cream3);color:var(--ink3)">✕</div>
+        <div class="ns-text">Custom software development or API integrations beyond Zapier's native connectors</div>
+      </div>
+      <div style="margin-top:20px;padding:16px;background:var(--gold-lt);border:1px solid var(--gold-bdr);font-size:12.5px;color:var(--ink2);line-height:1.55">
+        <strong style="display:block;margin-bottom:4px;color:var(--ink)">Phase 2 retainer available</strong>
+        After the primary constraint is fixed, ongoing optimisation and the next gate implementation are available as a monthly retainer from $900/month. Retainer clients receive priority booking and a 15% discount on all subsequent package work.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <span>Leak Plugger Implementation Packages · Tier 1 · v1.0</span>
+    <span>This proposal is valid for 14 days from the date above.</span>
+  </div>
+
+</div>
+
+<script>
+// ── Set date ────────────────────────────────────────────────────────
+document.getElementById('doc-date').textContent = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
+
+// ── URL param pre-fill ──────────────────────────────────────────────
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('name')) document.getElementById('prepared-for').textContent = p.get('name');
+  if (p.get('gate')) {
+    const gateMap = { '1':'Gate 1 — Scheduling', '2':'Gate 2 — Qualification', '3':'Gate 3 — Onboarding' };
+    document.getElementById('cb-gate-display').textContent = gateMap[p.get('gate')] || p.get('gate');
+    highlightPackage(p.get('gate'));
+  }
+  if (p.get('leak')) {
+    document.getElementById('cb-leak-display').textContent = '$' + Number(p.get('leak')).toLocaleString();
+  }
+  if (p.get('pv')) document.getElementById('calc-pv').value = p.get('pv');
+  if (p.get('ns')) document.getElementById('calc-ns').value = p.get('ns');
+  if (p.get('ah')) document.getElementById('calc-ah').value = p.get('ah');
+  if (p.get('hr')) document.getElementById('calc-hr').value = p.get('hr');
+  recalc();
+})();
+
+function highlightPackage(gate) {
+  const map = { '1':'pkg-g1', '2':'pkg-g2', '3':'pkg-g3' };
+  const badgeMap = { '1':'Your primary fix', '2':'Your primary fix', '3':'Your primary fix' };
+  const id = map[gate];
+  if (!id) return;
+  ['pkg-g1','pkg-g2','pkg-g3'].forEach(p => {
+    const el = document.getElementById(p);
+    if (p === id) {
+      if (!el.classList.contains('featured')) {
+        el.style.boxShadow = '0 0 0 2px #B08D4A';
+      }
+      const existing = el.querySelector('.pkg-badge');
+      if (existing) existing.textContent = 'Recommended for you';
+      else {
+        const badge = document.createElement('div');
+        badge.className = 'pkg-badge';
+        badge.textContent = 'Recommended for you';
+        el.insertBefore(badge, el.firstChild);
+      }
+    }
+  });
+}
+
+// ── Calculator ──────────────────────────────────────────────────────
+function n(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+
+function recalc() {
+  const pv = n('calc-pv') || 3000;
+  const ns = n('calc-ns') || 0;
+  const cr = (n('calc-cr') || 50) / 100;
+  const ah = n('calc-ah') || 0;
+  const hr = n('calc-hr') || 200;
+
+  const nsLeak    = ns * pv * cr;
+  const adminLeak = ah * hr * 4.3;
+  const totalLeak = Math.round(nsLeak + adminLeak);
+
+  // Update constraint bar
+  if (totalLeak > 0) {
+    document.getElementById('cb-leak-display').textContent = '$' + totalLeak.toLocaleString();
+    document.getElementById('cb-rec-display').innerHTML =
+      `Based on your numbers, reclaiming this revenue requires fixing <strong>one gate</strong> — not a full system overhaul.`;
+  }
+
+  // Payback per package
+  const prices = { g1: 2200, g2: 1800, g3: 2800 };
+
+  // G1: recovers no-show leak + some admin
+  const g1Monthly = nsLeak + (adminLeak * 0.4);
+  const g1Months  = g1Monthly > 0 ? (prices.g1 / g1Monthly).toFixed(1) : null;
+  document.getElementById('pb-g1-val').textContent = g1Months
+    ? (parseFloat(g1Months) <= 1 ? '1 recovered call' : `${g1Months} months`)
+    : '~ 1 recovered call';
+
+  // G2: recovers admin capacity primarily
+  const g2Monthly = adminLeak * 0.6;
+  const g2Months  = g2Monthly > 0 ? (prices.g2 / g2Monthly).toFixed(1) : null;
+  document.getElementById('pb-g2-val').textContent = g2Months
+    ? (parseFloat(g2Months) <= 1 ? '< 1 month' : `${g2Months} months`)
+    : '~ 2 hrs saved / week';
+
+  // G3: recovers onboarding ghost risk (~15% of verbal yeses ghost)
+  const g3Monthly = pv * 0.15 * (cr > 0 ? cr : 0.5) * 12 / 12;
+  const g3Months  = g3Monthly > 0 ? (prices.g3 / g3Monthly).toFixed(1) : null;
+  document.getElementById('pb-g3-val').textContent = g3Months && parseFloat(g3Months) < 24
+    ? `${g3Months} months`
+    : '~ 1 recovered client';
+
+  // Result line
+  const resultEl = document.getElementById('calc-result-line');
+  if (totalLeak > 0) {
+    resultEl.innerHTML = `Total estimated leak: <strong>$${totalLeak.toLocaleString()}/mo</strong>`;
+  }
+}
+</script>
+</body>
+</html>
